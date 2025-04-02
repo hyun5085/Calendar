@@ -11,6 +11,8 @@ public interface ConsummerRepository extends JpaRepository<Consummer, Long> {
 
     Optional<Consummer> findConsummerByConsummerName(String consummerName);
 
+    Optional<Consummer> findByConsummerEmail(String email);
+
     default Consummer findConsummerByConsummerNameOrelseThrow(String consummerName){
         return findConsummerByConsummerName(consummerName).orElseThrow(() ->
                 new ResponseStatusException(

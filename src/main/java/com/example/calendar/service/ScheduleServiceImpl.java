@@ -101,14 +101,6 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     }
 
-//    // 유저 삭제
-//    public void deleteConsummer(Long id, String consummerPassword) {
-//        Consummer consummer = consummerRepository.findByIdOrElseThrow(id);
-//        if (!consummer.getConsummerPassword().equals(consummerPassword)){
-//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Password does not match.");
-//        }
-//
-//        consummerRepository.delete(consummer);
-//    }
+
 
 }

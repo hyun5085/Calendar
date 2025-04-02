@@ -2,6 +2,8 @@ package com.example.calendar.service;
 
 import com.example.calendar.dto.ConsummerRequestDto;
 import com.example.calendar.dto.ConsummerResponseDto;
+import com.example.calendar.dto.LoginRequestDto;
+import com.example.calendar.dto.LoginResponseDto;
 import com.example.calendar.entity.Consummer;
 import com.example.calendar.repository.ConsummerRepository;
 import jakarta.transaction.Transactional;
@@ -80,5 +82,18 @@ public class ConsummerServiceImpl implements ConsummerService{
         }
 
         consummerRepository.delete(consummer);
+    }
+
+
+    // 로그인 기능 추가
+    public Consummer login(String email, String password) {
+        Consummer consummer = consummerRepository.findByConsummerEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        if (!consummer.getConsummerPassword().equals(password)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid password");
+        }
+
+        return consummer;
     }
 }

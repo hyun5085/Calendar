@@ -2,6 +2,7 @@ package com.example.calendar.controller;
 
 import com.example.calendar.dto.*;
 import com.example.calendar.service.ScheduleService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,14 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
     // 일정 생성
     @PostMapping
-    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto scheduleRequestDto){
+    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto scheduleRequestDto, HttpSession session){
+
+        // 로그인 유저 확인
+        Object loginUser = session.getAttribute("LOGIN_USER");
+        if (loginUser == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED); // Unauthorized
+        }
+
 
         return new ResponseEntity<>(scheduleService.saveSchedule(scheduleRequestDto),HttpStatus.CREATED);
     }
