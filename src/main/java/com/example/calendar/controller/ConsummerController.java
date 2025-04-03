@@ -4,6 +4,7 @@ import com.example.calendar.dto.ConsummerRequestDto;
 import com.example.calendar.dto.ConsummerResponseDto;
 import com.example.calendar.dto.UpdatePasswordRequestDto;
 import com.example.calendar.service.ConsummerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class ConsummerController {          // Controller 는 적절한 서비�
 
     // 유저 생성
     @PostMapping("/signup")
-    public ResponseEntity<ConsummerResponseDto> saveConsummer(@RequestBody ConsummerRequestDto consummerRequestDto){
+    public ResponseEntity<ConsummerResponseDto> saveConsummer(@RequestBody @Valid ConsummerRequestDto consummerRequestDto){
     //공유 / Http + 어떠한 방식으로 반환을 할건지?     / 변수명 : saveConsummer  /형식은 ConsummerRequestDto 형태로 반환
 
 

@@ -10,8 +10,10 @@ import java.util.Optional;
 public interface ConsummerRepository extends JpaRepository<Consummer, Long> {
 
     Optional<Consummer> findConsummerByConsummerName(String consummerName);
-
+    // Email 검색
     Optional<Consummer> findByConsummerEmail(String email);
+    // Email 중복 체크
+    boolean existsByConsummerEmail(String consummerEmail);
 
     default Consummer findConsummerByConsummerNameOrelseThrow(String consummerName){
         return findConsummerByConsummerName(consummerName).orElseThrow(() ->

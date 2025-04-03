@@ -5,6 +5,8 @@ import com.example.calendar.dto.ConsummerResponseDto;
 import com.example.calendar.dto.LoginRequestDto;
 import com.example.calendar.dto.LoginResponseDto;
 import com.example.calendar.entity.Consummer;
+import com.example.calendar.exception.CustomException;
+import com.example.calendar.exception.ErrorCode;
 import com.example.calendar.repository.ConsummerRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +26,13 @@ public class ConsummerServiceImpl implements ConsummerService{
 
     // 유저 생성
     public ConsummerResponseDto saveConsummer(ConsummerRequestDto consummerRequestDto) {
+        // 이메일 중복 체크
+        if (consummerRepository.existsByConsummerEmail(consummerRequestDto.getConsummerEmail())) {
+            throw new CustomException(ErrorCode.EMAIL_DUPLICATED);
+        }
 
+        // 중복이 없으면 유저 생성
         Consummer consummer = new Consummer(consummerRequestDto);
-
         Consummer savedConsummer = consummerRepository.save(consummer);
 
         return new ConsummerResponseDto(savedConsummer);
@@ -87,13 +93,13 @@ public class ConsummerServiceImpl implements ConsummerService{
 
     // 로그인 기능 추가
     public Consummer login(String email, String password) {
-        Consummer consummer = consummerRepository.findByConsummerEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Consummer user = consummerRepository.findByConsummerEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        if (!consummer.getConsummerPassword().equals(password)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid password");
+        if (!user.getConsummerPassword().equals(password)) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
-        return consummer;
+        return user;
     }
 }
