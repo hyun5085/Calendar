@@ -24,7 +24,6 @@ public class LoginController {
     // 현재 로그인 상태를 관리하는 변수 (true: 로그인됨, false: 로그인 없음)
     private static final AtomicBoolean isLoggedIn = new AtomicBoolean(false);
 
-
     // 로그인 처리
     // HTTP 요청을 처리하고, 로그인 성공 시 사용자 정보를 포함한 응답을 반환하는 메서드
     // 요청 데이터 형식: LoginRequestDto (JSON 본문에서 매핑됨)

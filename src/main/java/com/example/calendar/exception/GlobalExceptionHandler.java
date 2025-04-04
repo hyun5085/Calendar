@@ -18,13 +18,13 @@ public class GlobalExceptionHandler {
     // CustomException이 발생하면 이 메서드가 실행
     // CustomException에 정의된 errorCode 정보를 기반으로 HTTP 상태 코드와 메시지를 클라이언트에게 전달
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponseDto> handleCustomException(CustomException ex) {
+    public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
 
         // 발생한 CustomException에서 ErrorCode를 가져옵니다
         ErrorCode errorCode = ex.getErrorcode();
 
         // ErrorResponseDto 객체를 생성하여 ErrorCode에 맞는 응답을 구성합니다.
-        ErrorResponseDto errorResponse = new ErrorResponseDto( // 예외에서 ErrorCode를 가져와서 ErrorResponseDto로 변환
+        ErrorResponse errorResponse = new ErrorResponse( // 예외에서 ErrorCode를 가져와서 ErrorResponseDto로 변환
                 errorCode.getCode(),        // 오류 코드
                 errorCode.getMessage(),     // 오류 메시지
                 errorCode.getStatus()       // HTTP 상태 코드
