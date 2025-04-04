@@ -111,7 +111,7 @@ public class ConsummerController {          // Controller 는 적절한 서비�
         // id와 함께 전달된 패스워드를 사용하여 해당 소비자를 삭제
         consummerService.deleteConsummer(id, consummerRequestDto.getConsummerPassword());
 
-        // 삭제 완료 후, 상태 코드 204 No Content를 반환 (응답 본문 없음)
+        // 삭제 완료 후, 상태 코드 204 No Content를 반환 (응답 본문 없음)!!
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
