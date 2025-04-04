@@ -16,8 +16,6 @@ public enum ErrorCode {
     SCHEDULE_NOT_FOUND("C008", "일정을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     ALREADY_LOGGED_IN("C009", "이미 로그인된 사용자가 있습니다.", HttpStatus.CONFLICT);
 
-
-
     private final String code;
     private final String message;
     private final HttpStatus status;
