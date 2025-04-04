@@ -3,7 +3,10 @@ package com.example.calendar.controller;
 import com.example.calendar.dto.ConsummerRequestDto;
 import com.example.calendar.dto.ConsummerResponseDto;
 import com.example.calendar.dto.UpdatePasswordRequestDto;
+import com.example.calendar.exception.CustomException;
+import com.example.calendar.exception.ErrorCode;
 import com.example.calendar.service.ConsummerService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,7 +32,12 @@ public class ConsummerController {          // Controller 는 적절한 서비�
     // @RequestBody  HTTP 요청의 본문(body)에 있는 JSON 데이터를 ConsummerRequestDto 객체로 변환
     // @Valid : ConsummerRequestDto에 정의된 @NotBlank, @Email 같은 유효성 검증(Validation)을 수행
     @PostMapping("/signup")
-    public ResponseEntity<ConsummerResponseDto> saveConsummer(@RequestBody @Valid ConsummerRequestDto consummerRequestDto){
+    public ResponseEntity<ConsummerResponseDto> saveConsummer(@RequestBody @Valid ConsummerRequestDto consummerRequestDto, HttpSession session){
+
+        // 세션에 로그인 정보가 존재하면 예외 발생
+        if (session.getAttribute("LOGIN_USER") != null) {
+            throw new CustomException(ErrorCode.ALREADY_LOGGED_IN);
+        }
 
         // 반환은 Http 응답으로 표현 : 회원 저장 요청을 처리하는 비즈니스 로직을 수행 하고 회원 정보를 응답으로 반환
         // ResponseEntity <>() : 응답 데이터와 함께 Http 상태 코드를 포함하여 반환 ( 응답 데이터는 필수가 아님 )

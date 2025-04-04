@@ -14,18 +14,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-
 @RestController
 @RequestMapping("/consummers")
 @RequiredArgsConstructor
 public class LoginController {
 
     private final ConsummerService consummerService;
-
-    // 현재 로그인 상태를 관리하는 변수 (true: 로그인됨, false: 로그인 없음)
-    private static final AtomicBoolean isLoggedIn = new AtomicBoolean(false);
 
     /**
      * 로그인 처리
@@ -34,7 +28,7 @@ public class LoginController {
      * @return 로그인 성공 시 사용자 정보 반환 (ResponseEntity<LoginResponseDto>)
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login( @RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request) {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletRequest request) {
 
         // 세션 가져오기
         HttpSession session = request.getSession();
@@ -45,10 +39,10 @@ public class LoginController {
                 loginRequestDto.getConsummerPassword()
         );
 
+        // 로그인 실패 시 예외 발생
         if (loginUser == null) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
-
 
         // 로그인된 사용자 정보를 DTO로 변환
         LoginResponseDto responseDto = new LoginResponseDto(loginUser);
@@ -56,39 +50,33 @@ public class LoginController {
         // 세션에 로그인 정보를 저장
         session.setAttribute("LOGIN_USER", responseDto);
 
-        // 디버깅용 출력문
+        // 디버깅용 출력문 (나중에 제거해도 됨)
         System.out.println("로그인 성공! 세션 저장: " + session.getAttribute("LOGIN_USER"));
 
         return ResponseEntity.ok(responseDto);
     }
 
-
-    // 로그아웃 처리
-    // 클라이언트의 세션을 무효화하고 로그인 정보를 삭제
-    // JSESSIONID 쿠키를 제거하여 클라이언트 측에서도 세션을 무효화
-    // 로그아웃 후에는 새로운 로그인 없이 보호된 API에 접근할 수 없음
-    // 요청 데이터: 없음
-    // 응답 데이터: ResponseEntity<Void> (응답 본문 없이 상태 코드만 반환)
+    /**
+     * 로그아웃 처리
+     * - 서버 세션 무효화
+     * - 클라이언트의 JSESSIONID 쿠키 삭제
+     */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
-        // 1. 세션 무효화 (로그인 정보 삭제)
+        // 1. 서버에서 세션 무효화
         HttpSession session = request.getSession(false);
-
         if (session != null) {
-            // 세션을 무효화하여 로그아웃 처리
-            session.invalidate();
+            session.invalidate(); // 세션 삭제
         }
 
-        // 2. 쿠키 삭제 (클라이언트에서 세션 정보 제거)
-        Cookie cookie = new Cookie("JSESSIONID", null);  // JSESSIONID는 기본 세션 쿠키
-        cookie.setMaxAge(0); // 쿠키 만료 설정
-        cookie.setPath("/"); // 모든 경로에서 삭제되도록 설정
+        // 2. JSESSIONID 쿠키 삭제 (보안 옵션 추가)
+        Cookie cookie = new Cookie("JSESSIONID", null);
+        cookie.setMaxAge(0); // 즉시 삭제
+        cookie.setPath("/"); // 모든 경로에서 삭제
+        cookie.setHttpOnly(true); // JS에서 접근 불가 (보안 강화)
+        cookie.setSecure(true); // HTTPS에서만 전송 (보안 강화)
         response.addCookie(cookie);
 
-        // 3. 응답 반환
         return ResponseEntity.ok().build();
     }
-
-
-
 }
