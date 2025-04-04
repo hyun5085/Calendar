@@ -96,19 +96,19 @@ public class ScheduleController {
     @DeleteMapping("/{id}")
     public  ResponseEntity<Void> deleteSchedule(@PathVariable Long id, HttpSession session){
 
-        // 1️⃣ 로그인한 유저 정보 가져오기
+        // 1. 로그인한 유저 정보 가져오기
         LoginResponseDto loggedInUser = (LoginResponseDto) session.getAttribute("LOGIN_USER");
         if (loggedInUser == null) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
 
-        // 2️⃣ 삭제하려는 일정 정보 가져오기
+        // 2. 삭제하려는 일정 정보 가져오기
         ScheduleResponseDto existingSchedule = scheduleService.findByScheduleId(id);
         if (existingSchedule == null) {
             throw new CustomException(ErrorCode.SCHEDULE_NOT_FOUND);
         }
 
-        // 3️⃣ 로그인한 유저와 일정 작성자 비교
+        // 3. 로그인한 유저와 일정 작성자 비교
         String scheduleWriter = existingSchedule.getScheduleWriter(); // 작성자 정보
         String loggedInUserName = loggedInUser.getConsummerName(); // 로그인한 유저 이름
 
