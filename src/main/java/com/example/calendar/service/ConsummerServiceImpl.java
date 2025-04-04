@@ -150,4 +150,13 @@ public class ConsummerServiceImpl implements ConsummerService{
         // 로그인 성공 시 소비자 객체 반환
         return consummer;
     }
+
+    @Override
+    public boolean validateConsummerPassword(Long id, String password) {
+        Consummer consummer = consummerRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        return consummer.getConsummerPassword().equals(password);
+    }
+
 }

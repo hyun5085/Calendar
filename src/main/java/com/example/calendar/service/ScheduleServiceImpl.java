@@ -93,36 +93,51 @@ public class ScheduleServiceImpl implements ScheduleService{
     // 일정 수정
     public ScheduleResponseDto updateSchedule(Long id, String scheduleWriter, String scheduleTitle, String scheduleContent, String userPassword) {
 
-        // 기존 일정 조회
+        // 🔹 기존 일정 조회
         Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
 
-        // 작성자 정보 가져오기
+        // 🔹 작성자 정보 가져오기
         Consummer consummer = schedule.getConsummer();
 
-        // 작성자가 다르면 예외 발생 (403 Forbidden)
+        // 🔹 작성자 검증
         if (!schedule.getConsummer().getConsummerName().equals(scheduleWriter)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the owner of this schedule.");
         }
 
-        // 작성자의 비밀번호 검증
-        if (consummer == null || consummer.getConsummerPassword() == null || !consummer.getConsummerPassword().equals(userPassword)) {
+        // 🔹 비밀번호 검증 (수정할 때 패스워드 필요)
+        if (!validateSchedulePassword(id, userPassword)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password.");
         }
 
-        // 일정 수정
+        // 🔹 일정 수정
         schedule.update(scheduleWriter, scheduleTitle, scheduleContent);
 
-        // 수정된 일정 저장
+        // 🔹 수정된 일정 저장
         scheduleRepository.save(schedule);
 
         return new ScheduleResponseDto(schedule);
     }
 
 
+    // 일정 삭제
     public void deleteSchedule(Long id) {
-        Schedule findSchedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
-        scheduleRepository.delete(findSchedule);
 
+        // 🔹 삭제할 일정 가져오기
+        Schedule findSchedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
+
+        // 🔹 일정 삭제
+        scheduleRepository.delete(findSchedule);
+    }
+
+    // 🔹 일정 비밀번호 검증 메서드 추가
+    public boolean validateSchedulePassword(Long id, String userPassword) {
+
+        // 🔹 일정 조회
+        Schedule schedule = scheduleRepository.findScheduleByIdOrElseThrow(id);
+
+        // 🔹 일정 작성자의 비밀번호 검증
+        Consummer consummer = schedule.getConsummer();
+        return consummer != null && consummer.getConsummerPassword() != null && consummer.getConsummerPassword().equals(userPassword);
     }
 
 

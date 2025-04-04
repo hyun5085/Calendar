@@ -41,4 +41,7 @@ public interface ConsummerService {
     // 요청 데이터 형식: String email (이메일), String password (비밀번호)
     // 반환 데이터 형식: Consummer (로그인한 유저 정보)
     Consummer login(String email, String password);
+
+    // 🔹 유저 비밀번호 검증 메서드 추가
+    boolean validateConsummerPassword(Long id, String password);
 }
